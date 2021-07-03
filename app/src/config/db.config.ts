@@ -1,4 +1,4 @@
-const { Sequelize } = require("sequelize");
+import { Sequelize, Dialect } from "sequelize";
 
 const config = {
   HOST: "localhost",
@@ -16,9 +16,8 @@ const config = {
 
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   host: config.HOST,
-  dialect: config.dialect,
-  operatorsAliases: false,
+  dialect: config.dialect as Dialect,
   pool: config.pool,
 });
 
-module.exports = sequelize;
+export default sequelize;

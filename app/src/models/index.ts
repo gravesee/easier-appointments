@@ -1,9 +1,9 @@
-const sequelize = require("../config/db.config");
+import sequelize from "../config/db.config";
 
-const User = require("./user.model");
-const Role = require("./role.model");
+import {User} from "./user.model";
+import {Role} from "./role.model";
 
-db = {
+export const db = {
   sequelize: sequelize,
   user: User,
   role: Role,
@@ -21,4 +21,4 @@ db.user.belongsToMany(db.role, {
   otherKey: "roleId",
 });
 
-module.exports = db;
+export type IDatabase = typeof db;
