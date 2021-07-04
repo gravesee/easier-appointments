@@ -69,7 +69,7 @@ const signIn = async (req: Request, res: Response) => {
     // 24 hours
     const token = jwt.sign({ id: user.id }, secret, { expiresIn: 86400 });
 
-    const authorities = user.roles?.map(_ => `ROLE_${_.name}`) || [];
+    const authorities = (await user.getRoles()).map(_ => `ROLE_${_.name.toUpperCase()}`) || [];
 
     res.status(200).send({
       id: user.id,
@@ -80,6 +80,7 @@ const signIn = async (req: Request, res: Response) => {
     });
 
   } catch (err) {
+    console.log(err);
     res.status(500).send({ message: err });
   }
 }

@@ -10,7 +10,7 @@ const checkDuplicateUsernameOrEmail = async (req: Request, res: Response, next: 
     });
     if (user) {
       res.status(400).send({ message: "Failed! Username is already in use!" });
-      return; 
+      return;
     }
   } catch (err) {
     console.log(err);
@@ -47,7 +47,7 @@ const checkRolesExisted = async (req: Request, res: Response, next: NextFunction
     }
   } else {
     //req.body.roles = ["user"];
-    
+
   };
   next();
 }
