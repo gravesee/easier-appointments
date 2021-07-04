@@ -1,24 +1,18 @@
 import sequelize from "../config/db.config";
 
-import {User} from "./user.model";
-import {Role} from "./role.model";
+// import { User } from "./user.model";
+// import { Role } from "./role.model";
+
+import { User, Role } from "./user.role.model";
+
+User.belongsToMany(Role, { through: "user_roles" });
+Role.belongsToMany(User, { through: "user_roles" });
 
 export const db = {
   sequelize: sequelize,
   user: User,
   role: Role,
+  ROLES: ["user", "admin", "moderator"],
 };
-
-db.role.belongsToMany(db.user, {
-  through: "user_roles",
-  foreignKey: "roleId",
-  otherKey: "userId",
-});
-
-db.user.belongsToMany(db.role, {
-  through: "user_roles",
-  foreignKey: "userId",
-  otherKey: "roleId",
-});
 
 export type IDatabase = typeof db;
