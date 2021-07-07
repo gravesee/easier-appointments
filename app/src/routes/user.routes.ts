@@ -1,4 +1,4 @@
-import { authJwt } from "../middleware";
+import middleware from "../middleware";
 import controller from "../controllers/user.controller";
 import { Request, Response, NextFunction, Application } from "express";
 
@@ -11,23 +11,27 @@ export default (app: Application) => {
     next();
   });
 
-  app.get("/api/test/all", controller.allAccess);
+  app.get(
+    "/api/test/all",
+    middleware.checkAuthorization(['*']),
+    controller.allAccess);
 
   app.get(
     "/api/test/user",
-    [authJwt.verifyToken],
+    middleware.checkAuthorization(['ROLE_USER']),
     controller.userBoard
   );
 
   app.get(
     "/api/test/mod",
-    [authJwt.verifyToken, authJwt.isModerator],
+    middleware.checkAuthorization(['ROLE_MODERATOR']),
     controller.moderatorBoard
   );
 
   app.get(
     "/api/test/admin",
-    [authJwt.verifyToken, authJwt.isAdmin],
+    //[middleware.authJwt.verifyToken, middleware.authJwt.isAdmin],
+    middleware.checkAuthorization(['ROLE_ADMIN']),
     controller.adminBoard
   );
 };

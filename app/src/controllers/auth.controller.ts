@@ -1,32 +1,28 @@
-import { db } from "../models";
-import { secret } from "../config/auth.config";
+import { Role } from "../db/models";
+import { User } from "../db/models";
 
 import { Op } from "sequelize";
 
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { Request, Response } from "express";
-import sequelize from "../config/db.config";
-import { Role } from "../models/user.role.model";
+import { NextFunction, Request, Response } from "express";
+import { noExtendLeft } from "sequelize/types/lib/operators";
 
 
-const signUp = async (req: Request, res: Response) => {
+const signUp = async (req: Request, res: Response, next: NextFunction) => {
   // Save User to Database
 
   try {
     // create the user
-    const user = await db.user.create({
+    const user = await User.create({
       username: req.body.username,
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 8),
     });
 
-    console.log("========== User Roles:", user.roles);
-
     // if request has roles, set all the ones that 
     let roles: (Role | number)[];
     if (req.body.roles) {
-      roles = await db.role.findAll({
+      roles = await Role.findAll({
         where: {
           name: { [Op.or]: req.body.roles }
         }
@@ -37,17 +33,22 @@ const signUp = async (req: Request, res: Response) => {
     }
 
     await user.setRoles(roles);
-    return res.status(200).send({ message: user });
+    
+    const authorities = (await user.getRoles()).map(_ => `ROLE_${_.name.toUpperCase()}`) || [];
+    res.locals.roles = authorities;
+    
+    //return res.status(200).send({ message: user });
+    next();
 
   } catch (err) {
     res.status(500).send({ message: err });
   }
 }
 
-const signIn = async (req: Request, res: Response) => {
+const signIn = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
-    const user = await db.user.findOne({
+    const user = await User.findOne({
       where: { username: req.body.username }
     });
 
@@ -66,23 +67,16 @@ const signIn = async (req: Request, res: Response) => {
       })
     }
 
-    // 24 hours
-    const token = jwt.sign({ id: user.id }, secret, { expiresIn: 86400 });
+    const roles = (await user.getRoles()).map(_ => `ROLE_${_.name.toUpperCase()}`) || [];
+    res.locals.roles = roles;
 
-    const authorities = (await user.getRoles()).map(_ => `ROLE_${_.name.toUpperCase()}`) || [];
 
-    res.status(200).send({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      roles: authorities,
-      accessToken: token
-    });
+    next();
 
   } catch (err) {
     console.log(err);
-    res.status(500).send({ message: err });
+    return res.status(500).send({ message: err }); 
   }
 }
 
-export default { signIn, signUp };
+export default { signIn, signUp }; 

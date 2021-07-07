@@ -1,4 +1,4 @@
-import { verifySignUp } from "../middleware";
+import middleware from "../middleware";
 import controller from "../controllers/auth.controller";
 import { Request, Response, NextFunction, Application } from "express";
 
@@ -15,11 +15,15 @@ export default (app: Application) => {
   app.post(
     "/api/auth/signup",
     [
-      verifySignUp.checkDuplicateUsernameOrEmail,
-      verifySignUp.checkRolesExisted
+      middleware.verifySignUp.checkDuplicateUsernameOrEmail,
+      middleware.verifySignUp.checkRolesExisted,
     ],
-    controller.signUp
+    controller.signUp,
+    middleware.sessionSetLoggedIn
   );
 
-  app.post("/api/auth/signin", controller.signIn);
+  app.post("/api/auth/signin",
+    middleware.sessionCheckLoggedIn,
+    controller.signIn,
+    middleware.sessionSetLoggedIn);
 };

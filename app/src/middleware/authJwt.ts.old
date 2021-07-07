@@ -1,16 +1,12 @@
-//@ts-ignore
 import jwt from "jsonwebtoken";
 import { secret } from "../config/auth.config.js";
-import { db } from "../models";
-
+import { User } from "../db/models/user.model";
 import { Request, Response, NextFunction } from "express";
-// import { Role } from "../models/role.model.js";
-// import { Role } from "../models/user.role.model.js";
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const accessHeader = req.headers["x-access-token"];
   const token = Array.isArray(accessHeader) ? accessHeader[0] : accessHeader;
-
+  
   if (!token) {
     return res.status(403).send({
       message: "No token provided!"
@@ -37,7 +33,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
 const hasRoles = (roles: string[]) => async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await db.user.findByPk(req.userId);
+    const user = await User.findByPk(req.userId);
 
     if (user) {
       const userRoles = (await user.getRoles()).map(role => role.name);

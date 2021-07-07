@@ -1,5 +1,7 @@
+require('dotenv').config({ path: __dirname + "/../.env" });
 import express from "express";
 import cors from "cors";
+import { sessionMiddleware } from "./middleware/session";
 
 const app = express();
 
@@ -10,23 +12,25 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(sessionMiddleware);
 
 // Sync the database
-import { IDatabase, db } from "./models";
+import sequelize from "./db/models/config";
+import { Role } from "./db/models/role.model";
 
-async function initDatase(db: IDatabase) {
+async function initDatabase() {
   try {
-    await db.sequelize.sync({ force: true });
-    await db.role.create({ id: 1, name: "user" });
-    await db.role.create({ id: 2, name: "moderator" });
-    await db.role.create({ id: 3, name: "admin" });
+    await sequelize.sync({ force: true });
+    await Role.create({ id: 1, name: "user" });
+    await Role.create({ id: 2, name: "moderator" });
+    await Role.create({ id: 3, name: "admin" });
     console.log("DB Synced");
   } catch (err) {
     console.log(err);
   }
 }
 
-initDatase(db); 
+initDatabase();
 
 // set routes on the application
 import authRoutes from './routes/auth.routes';

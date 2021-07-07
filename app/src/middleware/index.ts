@@ -1,8 +1,12 @@
 
-import { authJwt } from "./authJwt";
+/// import { authJwt } from "./authJwt";
 import { verifySignUp } from "./verifySignUp";
+import { sessionCheckLoggedIn, sessionSetLoggedIn, checkAuthorization } from "./session";
 
-export {
-  authJwt,
-  verifySignUp
+export default {
+  //authJwt,
+  verifySignUp,
+  sessionSetLoggedIn,
+  sessionCheckLoggedIn,
+  checkAuthorization
 };

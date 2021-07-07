@@ -1,5 +1,6 @@
-import sequelize from '../config/db.config';
-import { DataTypes, Model, HasManyGetAssociationsMixin, HasManyAddAssociationMixin, Association, Optional, HasManySetAssociationsMixin } from 'sequelize';
+import sequelize from './config';
+import { DataTypes, Model, HasManyGetAssociationsMixin, Association, Optional, HasManySetAssociationsMixin } from 'sequelize';
+import { Role, RoleAttributes } from './role.model';
 
 interface UserAttributes {
   id: number;
@@ -10,7 +11,7 @@ interface UserAttributes {
 
 interface UserCreationAttributes extends Optional<UserAttributes, "id"> { };
 
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
 
   public id!: number;
   public username!: string;
@@ -59,41 +60,3 @@ User.init({
     tableName: "users"
   }
 );
-
-interface RoleAttributes {
-  id: number;
-  name: string;
-}
-
-interface RoleCreationAttributes extends Optional<RoleAttributes, "id"> { };
-
-class Role extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
-  public id!: number;
-  public name!: string;
-
-  public readonly createAt!: Date;
-  public readonly updateAt!: Date;
-
-  public static associations: {
-    roles: Association<Role, User>;
-  }
-}
-
-Role.init({
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  }
-},
-  {
-    sequelize,
-    tableName: "roles"
-  }
-);
-
-export { Role, User };
