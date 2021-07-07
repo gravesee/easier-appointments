@@ -1,7 +1,13 @@
-import { Role } from './role.model'
 import { User } from './user.model'
+import { Role } from './role.model'
+import { Appointment } from './appointment.model'
 
-Role.belongsToMany(User, { through: "user_roles" });
+// Role.belongsToMany(User, { through: "user_roles" });
 User.belongsToMany(Role, { through: "user_roles" });
 
-export { Role, User };
+User.belongsToMany(Appointment, {through: "user_appointments"});
+Appointment.belongsToMany(User, {through: "user_appointments"});
+
+// Appointment.hasMany(User);
+
+export { Role, User, Appointment }; 

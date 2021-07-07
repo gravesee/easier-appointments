@@ -1,4 +1,3 @@
-//import sequelize from '../../config/db.config';
 import sequelize from './config';
 import { DataTypes, Model, Association, Optional } from 'sequelize';
 import { User } from './user.model';

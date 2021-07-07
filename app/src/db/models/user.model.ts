@@ -1,8 +1,9 @@
 import sequelize from './config';
 import { DataTypes, Model, HasManyGetAssociationsMixin, Association, Optional, HasManySetAssociationsMixin } from 'sequelize';
 import { Role, RoleAttributes } from './role.model';
+import { Appointment } from './appointment.model';
 
-interface UserAttributes {
+export interface UserAttributes {
   id: number;
   username: string,
   email: string,
@@ -26,12 +27,14 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public getRoles!: HasManyGetAssociationsMixin<Role>;
   public setRoles!: HasManySetAssociationsMixin<Role, RoleAttributes['id']>;
 
-  // // inclusions
-  public readonly roles?: Role[];
+  public getAppointments!: HasManyGetAssociationsMixin<Appointment>;
 
-  public static associations: {
-    roles: Association<User, Role>;
-  }
+  // // // inclusions
+  // public readonly roles?: Role[];
+
+  // public static associations: {
+  //   roles: Association<User, Role>;
+  // }
 }
 
 User.init({
