@@ -3,7 +3,7 @@ import { Sequelize, Dialect } from "sequelize";
 const config = {
   HOST: "localhost",
   USER: "postgres",
-  PASSWORD: "Sh3ldon$", 
+  PASSWORD: "password", 
   DB: "EasierAppointments",
   dialect: "postgres",
   pool: {
